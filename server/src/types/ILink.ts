@@ -1,8 +1,9 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 export interface ILink extends Document {
   originalURL: string;
   alias: string;
   clickCount: number;
-  activate: boolean;
+  active: boolean;
+  user: Types.ObjectId;
 }

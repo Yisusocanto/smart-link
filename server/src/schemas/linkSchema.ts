@@ -19,6 +19,15 @@ export const linkSchhema = new Schema<ILink>(
       default: 0,
       min: 0,
     },
+    active: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true,
+    },
   },
   {
     timestamps: true,

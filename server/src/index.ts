@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import { connectDatabase } from "./config/connectDatabase.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { authRouter } from "./routes/authRoutes.js";
+import { linkRouter } from "./routes/linkRoutes.js";
 
 dotenv.config();
 
@@ -20,11 +21,12 @@ app.use(morgan("tiny"));
 app.use(cookieParser());
 app.use(cors());
 
-app.get("/", (_req, res) => {
+app.get("/health", (_req, res) => {
   res.send("Hello World");
 });
 
 app.use("/auth", authRouter);
+app.use("/", linkRouter);
 
 app.use(errorHandler);
 
