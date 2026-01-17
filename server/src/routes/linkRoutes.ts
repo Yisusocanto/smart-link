@@ -6,12 +6,14 @@ import {
   redirectToURL,
   toggleStatus,
 } from "../controllers/linkController.js";
+import { tokenOptional } from "../middleware/tokenOptional.js";
 
 export const linkRouter: Router = Router();
 
-linkRouter.use(tokenRequired);
+linkRouter.use(tokenOptional);
 
 linkRouter.post("/", createLink);
-linkRouter.get("/", getAllLinks);
 linkRouter.get("/:alias", redirectToURL);
 linkRouter.get("/:alias/toggle-status", toggleStatus);
+
+linkRouter.get("/", getAllLinks, tokenRequired);

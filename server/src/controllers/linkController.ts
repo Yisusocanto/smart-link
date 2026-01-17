@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../lib/asyncHandler.js";
 import z from "zod";
-import { BadRequest, NotFound } from "../middleware/errorHandler.js";
+import {
+  BadRequest,
+  NotFound,
+  Unauthorized,
+} from "../middleware/errorHandler.js";
 import { Link } from "../models/ILink.js";
 import { createAlias } from "../lib/aliasHandler.js";
 
@@ -12,9 +16,9 @@ const linkSchema = z.object({
 });
 
 export const getAllLinks = asyncHandler(async (req: Request, res: Response) => {
-  const { _id } = req.user;
+  const userID = req.user?._id ?? "";
 
-  const links = await Link.find({ user: _id });
+  const links = await Link.find({ user: userID });
   res.json({ links: links });
 });
 
@@ -24,7 +28,7 @@ export const createLink = asyncHandler(async (req: Request, res: Response) => {
     throw BadRequest(result.error.issues[0]?.message ?? "Invalid data.");
   }
 
-  const { _id } = req.user;
+  const userID = req.user?._id;
 
   let alias: string;
   while (true) {
@@ -39,10 +43,13 @@ export const createLink = asyncHandler(async (req: Request, res: Response) => {
   const newLink = await Link.create({
     originalURL,
     alias: alias,
-    user: _id,
+    ...(userID ? { user: userID } : {}),
   });
 
-  res.json({ link: `${DOMAIN}/${newLink.alias}` });
+  res.json({
+    shortenLink: `${DOMAIN}/${newLink.alias}`,
+    originalURL: originalURL,
+  });
 });
 
 export const redirectToURL = asyncHandler(
@@ -70,6 +77,7 @@ export const redirectToURL = asyncHandler(
 
 export const toggleStatus = asyncHandler(
   async (req: Request, res: Response) => {
+    const userID = req.user?._id;
     const alias = req.params.alias;
     if (!alias) {
       throw BadRequest("Link invalid or not provided.");
@@ -78,6 +86,10 @@ export const toggleStatus = asyncHandler(
     const link = await Link.findOne({ alias: alias });
     if (!link) {
       throw NotFound("Link does not exist.");
+    }
+
+    if (userID && link.user.toString() != userID) {
+      throw Unauthorized("Your cannot modifies this link.");
     }
 
     link.active = !link.active;
