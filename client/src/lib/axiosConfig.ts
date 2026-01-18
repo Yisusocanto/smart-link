@@ -1,9 +1,10 @@
 import axios from "axios";
 
-const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL ?? "";
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3001";
 
 export const axiosInstance = axios.create({
-  baseURL: FRONTEND_URL,
+  baseURL: BACKEND_URL,
   headers: {
     "Content-Type": "application/json",
   },

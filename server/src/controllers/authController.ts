@@ -23,9 +23,7 @@ const signupSchema = z.object({
 });
 
 const loginSchema = z.object({
-  username: z
-    .string("Username must be provided.")
-    .min(4, "Minimum 4 characters."),
+  email: z.email("Email must be provided."),
   password: z
     .string("Password must be provided.")
     .min(6, "Minimun 6 characters."),
@@ -83,9 +81,9 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     throw BadRequest(result.error.issues[0]?.message ?? "Invalid data.");
   }
 
-  const { username, password } = result.data;
+  const { email, password } = result.data;
 
-  const user = await User.findOne({ username: username });
+  const user = await User.findOne({ email });
   if (!user) {
     throw NotFound("User does not exist.");
   }
@@ -114,4 +112,23 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   res.clearCookie("smartLink");
   res.json({ success: true });
+});
+
+export const getMe = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.user || !req.user._id) {
+    throw Unauthorized("User not authenticated.");
+  }
+
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw NotFound("User not found.");
+  }
+
+  res.json({
+    user: {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+    },
+  });
 });
