@@ -30,3 +30,10 @@ export const linkStats = async (cookieStore: string) => {
   });
   return data;
 };
+
+export const recentLinks = async (cookieStore: string) => {
+  const { data } = await axiosInstance.get("/recents", {
+    headers: { cookie: cookieStore },
+  });
+  return data;
+};

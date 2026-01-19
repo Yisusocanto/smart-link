@@ -1,5 +1,6 @@
-import KPICards from "@/components/feature/KPICards";
-import LinkCard from "@/components/feature/LinkCard";
+import RefreshButton from "@/components/common/RefreshButton";
+import KPICards from "@/components/KPICards";
+import LinkCard from "@/components/LinkCard";
 import { getAllLinks } from "@/services/linkService";
 import { Link as LinkType } from "@/types/Link";
 import {
@@ -26,10 +27,13 @@ async function Dashboard() {
     <div className="w-3/4 mx-auto px-10 py-6">
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-4xl font-bold">Dashboard</h1>
-        <Link className={buttonVariants({ variant: "primary" })} href={"/"}>
-          <Plus />
-          New Link
-        </Link>
+        <div className="flex gap-2">
+          <RefreshButton />
+          <Link className={buttonVariants({ variant: "primary" })} href={"/"}>
+            <Plus />
+            Create new Link
+          </Link>
+        </div>
       </div>
       <KPICards />
       <div className="flex flex-col gap-4 mt-8">

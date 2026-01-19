@@ -13,15 +13,18 @@ import {
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { Copy, ExternalLink, Zap } from "lucide-react";
+import { Check, Copy, ExternalLink, Zap } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { handleCopy } from "@/lib/handleCopy";
+import { useState } from "react";
 
 const Schema = z.object({
   url: z.url("URL invalid."),
 });
 
 function UrlForm() {
+  const [copied, setCopied] = useState(false);
   const {
     register,
     handleSubmit,
@@ -44,7 +47,7 @@ function UrlForm() {
     <div>
       <Form onSubmit={onSubmit}>
         <TextField isInvalid={!!errors.url} aria-label="text-field">
-          <InputGroup>
+          <InputGroup className={"py-7"}>
             <InputGroup.Input
               type="text"
               {...register("url")}
@@ -73,15 +76,16 @@ function UrlForm() {
             <a
               href={data.shortenLink}
               target="_blank"
-              className="text-lg text-blue-500 hover:text-blue-400 flex gap-2 items-center"
+              className="text-lg font-bold text-blue-500 hover:text-blue-400 flex gap-2 items-center"
             >
               {data.shortenLink} <ExternalLink size={18} />
             </a>
             <p className="text-muted">{data.originalURL}</p>
           </div>
           <div className="flex items-center">
-            <Button>
-              <Copy /> Copy
+            <Button onPress={() => handleCopy(data.shortenLink, setCopied)}>
+              {copied ? <Check /> : <Copy />}
+              {copied ? "copied" : "copy"}
             </Button>
           </div>
         </Card>

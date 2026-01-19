@@ -1,10 +1,9 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@heroui/react";
 import { X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import UserDropdown from "../auth/UserDropdown";
+import UserDropdown from "@/components/UserDropdown";
 import Link from "next/link";
 
 const loginLinks = [{ label: "Dashboard", href: "/dashboard" }];
@@ -15,17 +14,19 @@ const logoutLinks = [
 ];
 
 function NavBar() {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   const links = isAuthenticated ? loginLinks : logoutLinks;
 
   return (
-    <div className="h-14 w-full items-center px-10  justify-between flex border-b border-b-gray-700">
+    <div className="h-14 w-full bg-[#1a1a1d] items-center px-10  justify-between flex border-b border-b-gray-700">
       <div className="flex items-center gap-2">
-        <X />
-        <h1 className="text-xl font-bold">Smart Link</h1>
+        <Link href={"/"} className="text-xl font-bold flex items-center">
+          <X />
+          Smart <span className="text-accent">Link</span>
+        </Link>
       </div>
       <div className="flex gap-4">
         <div className="flex items-center gap-4">
@@ -33,7 +34,7 @@ function NavBar() {
             <Link
               key={link.label}
               href={link.href}
-              className={`${pathname == link.href ? "text-white" : "text-muted"} hover:underline`}
+              className={`${pathname == link.href ? "text-white" : "text-gray-300"} hover:underline`}
             >
               {link.label}
             </Link>

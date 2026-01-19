@@ -153,3 +153,12 @@ export const linkStats = asyncHandler(async (req: Request, res: Response) => {
     totalClicks: totalClicks[0]?.totalClicks ?? 0,
   });
 });
+
+export const recentLinks = asyncHandler(async (req: Request, res: Response) => {
+  const userID = req.user?._id ?? "";
+
+  const recentLinksArray = await Link.find({ user: userID })
+    .sort({ createdAt: -1 })
+    .limit(5);
+  res.json({ recentLinks: recentLinksArray });
+});

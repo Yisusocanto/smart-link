@@ -8,6 +8,7 @@ import { Check, Copy, ExternalLink, Trash, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import { handleCopy } from "@/lib/handleCopy";
 
 interface LinkCardProps {
   link: LinkType;
@@ -20,25 +21,18 @@ function LinkCard({ BACKEND_URL, link }: LinkCardProps) {
   const { mutate: toggleStatus, isPending } = useToggleLinkStatus();
   const { mutate: deleteLink } = useDeleteLink();
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(`${BACKEND_URL}/${link.alias}`);
-    setCopied(true);
-    toast("Link copied to the clipboard.");
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
     <Card className="w-full flex flex-row justify-between border p-5">
       <div className="flex flex-col">
         <Link
           href={`${BACKEND_URL}/${link.alias}`}
-          className="text-xl font-bold text-accent flex gap-2 items-center"
+          className="text-xl font-bold text-blue-500 hover:text-blue-400 flex gap-2 items-center"
         >
           {`${BACKEND_URL}/${link.alias}`} <ExternalLink />
         </Link>
         <p className="text-muted">{link.originalURL}</p>
         <p className="text-muted">
-          Created At: {dayjs(link.createdAt).format("MMMM DD, YYYY")}
+          Created on {dayjs(link.createdAt).format("MMMM DD, YYYY")}
         </p>
       </div>
       <div className="flex gap-8">
@@ -78,7 +72,11 @@ function LinkCard({ BACKEND_URL, link }: LinkCardProps) {
               {link.active ? "Deactivate link" : "Activate link"}
             </Tooltip.Content>
           </Tooltip>
-          <Button isIconOnly variant="secondary" onPress={handleCopy}>
+          <Button
+            isIconOnly
+            variant="secondary"
+            onPress={() => handleCopy(link, setCopied)}
+          >
             {copied ? <Check /> : <Copy />}
           </Button>
           <Button
