@@ -7,10 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import UserDropdown from "../auth/UserDropdown";
 import Link from "next/link";
 
-const loginLinks = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Settings", href: "/settings" },
-];
+const loginLinks = [{ label: "Dashboard", href: "/dashboard" }];
 
 const logoutLinks = [
   { label: "Login", href: "/login" },
@@ -22,12 +19,10 @@ function NavBar() {
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log(user);
-
   const links = isAuthenticated ? loginLinks : logoutLinks;
 
   return (
-    <div className="h-12 w-full items-center px-5  justify-between flex border-b border-b-gray-700">
+    <div className="h-14 w-full items-center px-10  justify-between flex border-b border-b-gray-700">
       <div className="flex items-center gap-2">
         <X />
         <h1 className="text-xl font-bold">Smart Link</h1>

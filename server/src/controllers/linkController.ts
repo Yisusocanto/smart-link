@@ -6,8 +6,9 @@ import {
   NotFound,
   Unauthorized,
 } from "../middleware/errorHandler.js";
-import { Link } from "../models/ILink.js";
+import { Link } from "../models/Link.js";
 import { createAlias } from "../lib/aliasHandler.js";
+import mongoose from "mongoose";
 
 const DOMAIN = process.env.DOMAIN ?? "http://localhost:3001";
 
@@ -16,9 +17,11 @@ const linkSchema = z.object({
 });
 
 export const getAllLinks = asyncHandler(async (req: Request, res: Response) => {
+  console.log("BACKEND: getAllLinks called!");
   const userID = req.user?._id ?? "";
+  console.log("BACKEND: UserID:", userID);
 
-  const links = await Link.find({ user: userID });
+  const links = await Link.find({ user: userID }, { user: 0 });
   res.json({ links: links });
 });
 
@@ -61,7 +64,7 @@ export const redirectToURL = asyncHandler(
 
     const link = await Link.findOneAndUpdate(
       { alias: alias },
-      { $inc: { clickCount: 1 } }
+      { $inc: { clickCount: 1 } },
     );
     if (!link) {
       throw NotFound("Link does not exist.");
@@ -72,7 +75,7 @@ export const redirectToURL = asyncHandler(
     }
 
     res.redirect(link.originalURL);
-  }
+  },
 );
 
 export const toggleStatus = asyncHandler(
@@ -99,5 +102,54 @@ export const toggleStatus = asyncHandler(
       link: link.originalURL,
       success: true,
     });
-  }
+  },
 );
+
+export const deleteLink = asyncHandler(async (req: Request, res: Response) => {
+  const alias = req.params.alias;
+
+  if (!alias) {
+    throw BadRequest("Alias must be prvided.");
+  }
+
+  const link = await Link.findOneAndDelete({ alias });
+  if (!link) {
+    throw NotFound("Link not found.");
+  }
+
+  res.json({ success: "Link deleted succesfully." });
+});
+
+export const linkStats = asyncHandler(async (req: Request, res: Response) => {
+  const userID = req.user?._id ?? "";
+  const userObjectId = new mongoose.Types.ObjectId(userID);
+
+  const totalLinksPromise = Link.countDocuments({ user: userObjectId });
+  const totalActiveLinksPromise = Link.countDocuments({
+    user: userObjectId,
+    active: true,
+  });
+  const totalClicksPromise = Link.aggregate([
+    {
+      $match: { user: userObjectId },
+    },
+    {
+      $group: {
+        _id: null,
+        totalClicks: { $sum: "$clickCount" },
+      },
+    },
+  ]);
+
+  const [totalLinks, totalActiveLinks, totalClicks] = await Promise.all([
+    totalLinksPromise,
+    totalActiveLinksPromise,
+    totalClicksPromise,
+  ]);
+
+  res.json({
+    totalLinks,
+    totalActiveLinks,
+    totalClicks: totalClicks[0]?.totalClicks ?? 0,
+  });
+});
