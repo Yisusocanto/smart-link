@@ -6,7 +6,6 @@ import {
   Card,
   FieldError,
   Form,
-  Input,
   InputGroup,
   Spinner,
   TextField,
@@ -47,7 +46,9 @@ function UrlForm() {
     <div>
       <Form onSubmit={onSubmit}>
         <TextField isInvalid={!!errors.url} aria-label="text-field">
-          <InputGroup className={"py-7"}>
+          <InputGroup
+            className={"py-7 hover:bg-surface pointer-fine:bg-surface"}
+          >
             <InputGroup.Input
               type="text"
               {...register("url")}
@@ -71,19 +72,25 @@ function UrlForm() {
         </p>
       )}
       {data && (
-        <Card className="flex flex-row justify-between mt-5 border">
-          <div className="flex flex-col">
+        <Card className="flex flex-col sm:flex-row justify-between mt-5 border p-4 gap-3">
+          <div className="flex flex-col min-w-0">
             <a
               href={data.shortenLink}
               target="_blank"
-              className="text-lg font-bold text-blue-500 hover:text-blue-400 flex gap-2 items-center"
+              className="text-base md:text-lg font-bold text-blue-500 hover:text-blue-400 flex gap-2 items-center break-all"
             >
-              {data.shortenLink} <ExternalLink size={18} />
+              {data.shortenLink}{" "}
+              <ExternalLink size={18} className="flex-shrink-0" />
             </a>
-            <p className="text-muted">{data.originalURL}</p>
+            <p className="text-muted text-sm md:text-base break-all">
+              {data.originalURL}
+            </p>
           </div>
-          <div className="flex items-center">
-            <Button onPress={() => handleCopy(data.shortenLink, setCopied)}>
+          <div className="flex items-center justify-center sm:justify-end">
+            <Button
+              onPress={() => handleCopy(data.shortenLink, setCopied)}
+              className="w-full sm:w-auto "
+            >
               {copied ? <Check /> : <Copy />}
               {copied ? "copied" : "copy"}
             </Button>

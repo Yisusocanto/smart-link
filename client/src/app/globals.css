@@ -1,2 +1,29 @@
 @import "tailwindcss";
 @import "@heroui/styles";
+
+/* Fix Hero UI v3 Beta hover states for dark variants */
+/* Secondary button hover fix */
+[data-variant="secondary"]:hover {
+  background-color: hsl(var(--heroui-default-200) / 0.2) !important;
+}
+
+/* Tertiary button hover fix */
+[data-variant="tertiary"]:hover {
+  background-color: hsl(var(--heroui-default-100) / 0.1) !important;
+}
+
+/* Danger-soft variant hover fix */
+[data-variant="danger-soft"]:hover {
+  background-color: hsl(var(--heroui-danger) / 0.2) !important;
+}
+
+/* Input hover state fix for dark theme */
+[data-slot="input-wrapper"]:hover {
+  background-color: hsl(var(--heroui-default-100) / 0.05) !important;
+}
+
+/* Ensure proper text color on hover */
+[data-variant="secondary"]:hover,
+[data-variant="tertiary"]:hover {
+  color: hsl(var(--heroui-default-foreground)) !important;
+}

@@ -7,7 +7,12 @@ import { useRouter } from "next/navigation";
 function RefreshButton() {
   const router = useRouter();
   return (
-    <Button isIconOnly onPress={() => router.refresh()} variant="secondary">
+    <Button
+      isIconOnly
+      onPress={() => router.refresh()}
+      variant="secondary"
+      className={"hover:bg-gray-800"}
+    >
       <RefreshCcw />
     </Button>
   );

@@ -15,21 +15,23 @@ async function Home() {
     return;
   }
   return (
-    <div className="w-3/4 mx-auto py-20">
-      <div className="mt-30 mb-10 text-center">
-        <h1 className="text-6xl font-bold mb-2">
+    <div className="w-full px-4 sm:px-6 md:w-11/12 lg:w-3/4 mx-auto py-12 md:py-20">
+      <div className="mt-10 md:mt-30 mb-8 md:mb-10 text-center">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-2 px-2">
           Simplify your <strong className="text-accent">digital</strong> reach
         </h1>
-        <p className="text-muted">
+        <p className="text-muted text-sm sm:text-base px-4">
           Paste a long URL to shorten it instantly. Track clicks ans analyze
           your audience with precision.
         </p>
       </div>
       <UrlForm />
       {recentLinksArray.length >= 1 && (
-        <div className="flex flex-col mt-15">
-          <h2 className="text-3xl font-bold text-center mb-5">Recent Links</h2>
-          <div className="flex flex-col gap-4">
+        <div className="flex flex-col mt-10 md:mt-15">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-4 md:mb-5">
+            Recent Links
+          </h2>
+          <div className="flex flex-col gap-3 md:gap-4">
             {recentLinksArray.map((link) => (
               <LinkCard
                 key={link._id}

@@ -15,10 +15,10 @@ function UserDropdown() {
         <Dropdown.Popover className={"border"}>
           <Dropdown.Menu>
             <Header>{user?.email}</Header>
-            <Dropdown.Section>
+            {/* <Dropdown.Section>
               <Dropdown.Item>Profile</Dropdown.Item>
               <Dropdown.Item>Settings</Dropdown.Item>
-            </Dropdown.Section>
+            </Dropdown.Section> */}
             <Dropdown.Section className="border-t border-t-gray-700">
               <Dropdown.Item
                 onPress={() => logout()}
