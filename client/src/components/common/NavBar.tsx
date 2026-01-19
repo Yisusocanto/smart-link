@@ -1,11 +1,10 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import UserDropdown from "@/components/UserDropdown";
 import Link from "next/link";
-import { buttonVariants } from "@heroui/react";
+import Image from "next/image";
 
 const loginLinks = [{ label: "Dashboard", href: "/dashboard" }];
 
@@ -25,7 +24,12 @@ function NavBar() {
     <div className="h-14 w-full bg-[#1a1a1d] items-center px-10  justify-between flex border-b border-b-gray-700">
       <div className="flex items-center gap-2">
         <Link href={"/"} className="text-xl font-bold flex items-center">
-          <X />
+          <Image
+            alt="Smart Link logo"
+            src={"/logo.png"}
+            width={35}
+            height={35}
+          />
           Smart <span className="text-accent">Link</span>
         </Link>
       </div>
