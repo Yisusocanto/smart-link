@@ -3,6 +3,7 @@
 import { useCreateLink } from "@/hooks/useLink";
 import {
   Button,
+  buttonVariants,
   Card,
   FieldError,
   Form,
@@ -17,12 +18,15 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { handleCopy } from "@/lib/handleCopy";
 import { useState } from "react";
+import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 
 const Schema = z.object({
   url: z.url("URL invalid."),
 });
 
 function UrlForm() {
+  const { isAuthenticated } = useAuth();
   const [copied, setCopied] = useState(false);
   const {
     register,
@@ -72,29 +76,46 @@ function UrlForm() {
         </p>
       )}
       {data && (
-        <Card className="flex flex-col sm:flex-row justify-between mt-5 border p-4 gap-3">
-          <div className="flex flex-col min-w-0">
-            <a
-              href={data.shortenLink}
-              target="_blank"
-              className="text-base md:text-lg font-bold text-blue-500 hover:text-blue-400 flex gap-2 items-center break-all"
-            >
-              {data.shortenLink} <ExternalLink size={18} className="shrink-0" />
-            </a>
-            <p className="text-muted text-sm md:text-base break-all">
-              {data.originalURL}
-            </p>
-          </div>
-          <div className="flex items-center justify-center sm:justify-end">
-            <Button
-              onPress={() => handleCopy(data.shortenLink, setCopied)}
-              className="w-full sm:w-auto "
-            >
-              {copied ? <Check /> : <Copy />}
-              {copied ? "copied" : "copy"}
-            </Button>
-          </div>
-        </Card>
+        <>
+          <Card className="flex flex-col sm:flex-row justify-between mt-5 border p-4 gap-3">
+            <div className="flex flex-col min-w-0">
+              <a
+                href={data.shortenLink}
+                target="_blank"
+                className="text-base md:text-lg font-bold text-blue-500 hover:text-blue-400 flex gap-2 items-center break-all"
+              >
+                {data.shortenLink}{" "}
+                <ExternalLink size={18} className="shrink-0" />
+              </a>
+              <p className="text-muted text-sm md:text-base break-all">
+                {data.originalURL}
+              </p>
+            </div>
+            <div className="flex items-center justify-center sm:justify-end">
+              <Button
+                onPress={() => handleCopy(data.shortenLink, setCopied)}
+                className="w-full sm:w-auto "
+              >
+                {copied ? <Check /> : <Copy />}
+                {copied ? "copied" : "copy"}
+              </Button>
+            </div>
+          </Card>
+        </>
+      )}
+      {data && !isAuthenticated && (
+        <div className="flex items-center justify-center gap-2 mt-4">
+          <p>
+            Create an account and start tracking and monitoring your shortened
+            URLs.
+          </p>
+          <Link
+            href={"/register"}
+            className={buttonVariants({ variant: "primary" })}
+          >
+            Register
+          </Link>
+        </div>
       )}
     </div>
   );
