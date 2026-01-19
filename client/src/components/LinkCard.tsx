@@ -29,8 +29,7 @@ function LinkCard({ BACKEND_URL, link }: LinkCardProps) {
           href={`${BACKEND_URL}/${link.alias}`}
           className="text-lg md:text-xl  m-auto md:m-0 font-bold text-blue-500 hover:text-blue-400 flex gap-2 items-center break-all"
         >
-          {`${BACKEND_URL}/${link.alias}`}{" "}
-          <ExternalLink className="flex-shrink-0" />
+          {`${BACKEND_URL}/${link.alias}`} <ExternalLink className="shrink-0" />
         </Link>
         <p className="text-muted text-sm md:text-base truncate max-w-full">
           {link.originalURL}

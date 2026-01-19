@@ -12,7 +12,7 @@ async function Home() {
     const data = await recentLinks(cookieStore.toString());
     recentLinksArray = data.recentLinks;
   } catch (error) {
-    return;
+    recentLinksArray = [];
   }
   return (
     <div className="w-full px-4 sm:px-6 md:w-11/12 lg:w-3/4 mx-auto py-12 md:py-20">

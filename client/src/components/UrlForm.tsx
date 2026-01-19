@@ -79,8 +79,7 @@ function UrlForm() {
               target="_blank"
               className="text-base md:text-lg font-bold text-blue-500 hover:text-blue-400 flex gap-2 items-center break-all"
             >
-              {data.shortenLink}{" "}
-              <ExternalLink size={18} className="flex-shrink-0" />
+              {data.shortenLink} <ExternalLink size={18} className="shrink-0" />
             </a>
             <p className="text-muted text-sm md:text-base break-all">
               {data.originalURL}

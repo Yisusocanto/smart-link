@@ -41,9 +41,13 @@ async function Dashboard() {
       </div>
       <KPICards />
       <div className="flex flex-col gap-3 md:gap-4 mt-6 md:mt-8">
-        {links.map((link) => (
-          <LinkCard link={link} BACKEND_URL={BACKEND_URL} key={link._id} />
-        ))}
+        {links.length >= 1 ? (
+          links.map((link) => (
+            <LinkCard link={link} BACKEND_URL={BACKEND_URL} key={link._id} />
+          ))
+        ) : (
+          <span className="text-center">No links yet.</span>
+        )}
       </div>
     </div>
   );

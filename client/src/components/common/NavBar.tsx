@@ -5,12 +5,13 @@ import { X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import UserDropdown from "@/components/UserDropdown";
 import Link from "next/link";
+import { buttonVariants } from "@heroui/react";
 
 const loginLinks = [{ label: "Dashboard", href: "/dashboard" }];
 
 const logoutLinks = [
   { label: "Login", href: "/login" },
-  { label: "Register", href: "/register" },
+  { label: "Get Started", href: "/register" },
 ];
 
 function NavBar() {
@@ -34,7 +35,7 @@ function NavBar() {
             <Link
               key={link.label}
               href={link.href}
-              className={`${pathname == link.href ? "text-white" : "text-gray-300"} hover:underline`}
+              className={`${pathname == link.href ? "text-white font-semibold" : "text-gray-300"} hover:underline `}
             >
               {link.label}
             </Link>
