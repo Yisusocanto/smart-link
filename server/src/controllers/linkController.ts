@@ -17,10 +17,7 @@ const linkSchema = z.object({
 });
 
 export const getAllLinks = asyncHandler(async (req: Request, res: Response) => {
-  console.log("BACKEND: getAllLinks called!");
   const userID = req.user?._id ?? "";
-  console.log("BACKEND: UserID:", userID);
-
   const links = await Link.find({ user: userID }, { user: 0 });
   res.json({ links: links });
 });

@@ -1,22 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyToken } from "../lib/tokenHandler.js";
+import { auth } from "../lib/auth.js";
 
-export const tokenOptional = (
+export const tokenOptional = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  const token = req.cookies.smartLink;
+  const session = await auth.api.getSession({
+    headers: new Headers(req.headers as any),
+  });
 
-  if (token) {
-    const payload = verifyToken(token);
-    if (payload) {
-      req.user = {
-        _id: payload.sub,
-      };
-      next();
-      return;
-    }
+  if (session) {
+    req.user = {
+      _id: session.user.id,
+    };
   }
 
   next();

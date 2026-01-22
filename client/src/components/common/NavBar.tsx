@@ -14,8 +14,7 @@ const logoutLinks = [
 ];
 
 function NavBar() {
-  const { isAuthenticated, loading } = useAuth();
-  const router = useRouter();
+  const { user, isAuthenticated, loading, logout } = useAuth();
   const pathname = usePathname();
 
   const links = isAuthenticated ? loginLinks : logoutLinks;
@@ -39,13 +38,16 @@ function NavBar() {
             <Link
               key={link.label}
               href={link.href}
+              prefetch={false}
               className={`${pathname == link.href ? "text-white font-semibold" : "text-gray-300"} hover:underline `}
             >
               {link.label}
             </Link>
           ))}
         </div>
-        {isAuthenticated && loading == false && <UserDropdown />}
+        {isAuthenticated && loading == false && (
+          <UserDropdown user={user!} logoutFn={logout} />
+        )}
       </div>
     </div>
   );

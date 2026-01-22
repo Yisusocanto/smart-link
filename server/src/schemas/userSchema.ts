@@ -10,9 +10,10 @@ export const userSchema = new Schema<IUser>(
       trim: true,
       lowercase: true,
     },
-    password: {
+    name: {
       type: String,
-      required: true,
+      required: false,
+      trim: true,
     },
     email: {
       type: String,
@@ -20,9 +21,17 @@ export const userSchema = new Schema<IUser>(
       trim: true,
       lowercase: true,
     },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    image: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );

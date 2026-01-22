@@ -1,9 +1,14 @@
 import { useAuth } from "@/hooks/useAuth";
+import { authClient } from "@/lib/auth-client";
+import { User } from "@/types/User";
 import { Avatar, Dropdown, Header } from "@heroui/react";
-import React from "react";
 
-function UserDropdown() {
-  const { user, logout } = useAuth();
+interface UserDropdownProps {
+  user: User;
+  logoutFn: () => void;
+}
+
+function UserDropdown({ user, logoutFn }: UserDropdownProps) {
   return (
     <div>
       <Dropdown>
@@ -21,7 +26,7 @@ function UserDropdown() {
             </Dropdown.Section> */}
             <Dropdown.Section className="border-t border-t-gray-700">
               <Dropdown.Item
-                onPress={() => logout()}
+                onPress={() => logoutFn()}
                 className="hover:bg-danger-soft"
               >
                 Logout

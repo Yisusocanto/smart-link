@@ -1,26 +1,22 @@
 import { Response, Request, NextFunction } from "express";
-import { verifyToken } from "../lib/tokenHandler.js";
+import { auth } from "../lib/auth.js";
 
-export const tokenRequired = (
+export const tokenRequired = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  const token = req.cookies.smartLink;
-  if (!token) {
-    res.status(401).json({ error: "token not provided." });
-    return;
-  }
+  const session = await auth.api.getSession({
+    headers: new Headers(req.headers as any),
+  });
 
-  const payload = verifyToken(token);
-  if (!payload) {
-    res.clearCookie("smartLink");
-    res.status(401).json({ error: "Token invalid." });
+  if (!session) {
+    res.status(401).json({ error: "Session not found or invalid." });
     return;
   }
 
   req.user = {
-    _id: payload.sub,
+    _id: session.user.id,
   };
   next();
 };

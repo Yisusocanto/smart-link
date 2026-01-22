@@ -3,14 +3,8 @@ import KPICards from "@/components/KPICards";
 import LinkCard from "@/components/LinkCard";
 import { getAllLinks } from "@/services/linkService";
 import { Link as LinkType } from "@/types/Link";
-import {
-  Button,
-  ButtonGroup,
-  buttonVariants,
-  Card,
-  Separator,
-} from "@heroui/react";
-import { Copy, Plus, Trash } from "lucide-react";
+import { buttonVariants } from "@heroui/react";
+import { Plus } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
 

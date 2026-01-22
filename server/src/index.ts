@@ -6,31 +6,34 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDatabase } from "./config/connectDatabase.js";
 import { errorHandler } from "./middleware/errorHandler.js";
-import { authRouter } from "./routes/authRoutes.js";
 import { linkRouter } from "./routes/linkRoutes.js";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./lib/auth.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env["PORT"] || 3001;
+const FRONTEND_URL = process.env.FRONTEND_URL ?? "";
 
-app.use(express.json());
-app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-app.use(morgan("tiny"));
-app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:3000",
-  })
+    origin: FRONTEND_URL,
+  }),
 );
+
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(morgan("tiny"));
+app.use("/api/auth", toNodeHandler(auth));
+app.use(express.json());
+app.use(cookieParser());
 
 app.get("/health", (_req, res) => {
   res.send("Hello World");
 });
 
-app.use("/auth", authRouter);
 app.use("/", linkRouter);
 
 app.use(errorHandler);
