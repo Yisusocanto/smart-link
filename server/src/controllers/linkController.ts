@@ -10,7 +10,7 @@ import { Link } from "../models/Link.js";
 import { createAlias } from "../lib/aliasHandler.js";
 import mongoose from "mongoose";
 
-const DOMAIN = process.env.DOMAIN ?? "http://localhost:3001";
+const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:3001";
 
 const linkSchema = z.object({
   originalURL: z.url("Url must be provided."),
@@ -47,7 +47,7 @@ export const createLink = asyncHandler(async (req: Request, res: Response) => {
   });
 
   res.json({
-    shortenLink: `${DOMAIN}/${newLink.alias}`,
+    shortenLink: `${BACKEND_URL}/${newLink.alias}`,
     originalURL: originalURL,
   });
 });

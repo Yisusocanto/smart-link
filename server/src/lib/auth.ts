@@ -19,6 +19,10 @@ export const auth = betterAuth({
   experimental: { joins: true },
   advanced: {
     cookiePrefix: "smart-link",
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: true,
+    },
   },
   user: {
     additionalFields: {
