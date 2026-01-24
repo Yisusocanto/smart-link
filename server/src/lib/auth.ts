@@ -21,7 +21,6 @@ export const auth = betterAuth({
     cookiePrefix: "smart-link",
     defaultCookieAttributes: {
       sameSite: "none",
-      secure: true,
     },
   },
   user: {
