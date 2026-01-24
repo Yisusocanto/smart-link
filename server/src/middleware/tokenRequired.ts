@@ -10,6 +10,9 @@ export const tokenRequired = async (
     headers: new Headers(req.headers as any),
   });
 
+  console.log("Session check - Path:", req.path);
+  console.log("Session found:", !!session);
+
   if (!session) {
     res.status(401).json({ error: "Session not found or invalid." });
     return;

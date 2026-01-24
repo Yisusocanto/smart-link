@@ -19,6 +19,9 @@ export const auth = betterAuth({
   experimental: { joins: true },
   advanced: {
     cookiePrefix: "smart-link",
+    useSecureCookies:
+      process.env["NODE_ENV"] === "production" ||
+      (process.env["BETTER_AUTH_URL"]?.startsWith("https://") ?? false),
     defaultCookieAttributes: {
       sameSite: "none",
     },
