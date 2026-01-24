@@ -6,11 +6,14 @@ export const tokenRequired = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log("--- New Request ---");
+  console.log("Path:", req.path);
+  console.log("Headers:", JSON.stringify(req.headers, null, 2));
+
   const session = await auth.api.getSession({
     headers: new Headers(req.headers as any),
   });
 
-  console.log("Session check - Path:", req.path);
   console.log("Session found:", !!session);
 
   if (!session) {

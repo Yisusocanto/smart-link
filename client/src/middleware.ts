@@ -6,6 +6,11 @@ export function middleware(request: NextRequest) {
     request.cookies.get("__Secure-smart-link.session_token")?.value ||
     request.cookies.get("smart-link.session_token")?.value;
 
+  console.log(
+    "Middleware Token check:",
+    sessionToken ? "Encontrado" : "No encontrado",
+  ); // Agrega este log para depurar en Vercel/Render logs
+
   const { pathname } = request.nextUrl;
 
   // Define protected routes

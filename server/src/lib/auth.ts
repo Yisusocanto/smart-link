@@ -24,6 +24,8 @@ export const auth = betterAuth({
       (process.env["BETTER_AUTH_URL"]?.startsWith("https://") ?? false),
     defaultCookieAttributes: {
       sameSite: "none",
+      secure: true,
+      httpOnly: true,
     },
   },
   user: {
