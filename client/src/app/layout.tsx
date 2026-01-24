@@ -5,6 +5,8 @@ import { Providers } from "@/providers/providers";
 import { AuthProvider } from "@/context/AuthContext";
 import NavBar from "@/components/common/NavBar";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +37,8 @@ export default function RootLayout({
           <AuthProvider>
             <NavBar />
             {children}
+            <Analytics />
+            <SpeedInsights />
             <Toaster richColors theme="dark" />
           </AuthProvider>
         </Providers>
