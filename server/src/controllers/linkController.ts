@@ -8,7 +8,6 @@ import {
 } from "../middleware/errorHandler.js";
 import { Link } from "../models/Link.js";
 import { createAlias } from "../lib/aliasHandler.js";
-import mongoose from "mongoose";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:3001";
 
@@ -119,16 +118,15 @@ export const deleteLink = asyncHandler(async (req: Request, res: Response) => {
 
 export const linkStats = asyncHandler(async (req: Request, res: Response) => {
   const userID = req.user?._id ?? "";
-  const userObjectId = new mongoose.Types.ObjectId(userID);
 
-  const totalLinksPromise = Link.countDocuments({ user: userObjectId });
+  const totalLinksPromise = Link.countDocuments({ user: userID });
   const totalActiveLinksPromise = Link.countDocuments({
-    user: userObjectId,
+    user: userID,
     active: true,
   });
   const totalClicksPromise = Link.aggregate([
     {
-      $match: { user: userObjectId },
+      $match: { user: userID },
     },
     {
       $group: {
