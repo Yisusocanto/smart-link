@@ -1,10 +1,12 @@
-import { useAuth } from "@/hooks/useAuth";
 import { authClient } from "@/lib/auth-client";
-import { User } from "@/types/User";
 import { Avatar, Dropdown, Header } from "@heroui/react";
 
 interface UserDropdownProps {
-  user: User;
+  user: {
+    email: string;
+    image?: string | null;
+    name?: string | null;
+  };
   logoutFn: () => void;
 }
 
@@ -14,16 +16,13 @@ function UserDropdown({ user, logoutFn }: UserDropdownProps) {
       <Dropdown>
         <Dropdown.Trigger>
           <Avatar>
-            <Avatar.Fallback>FA</Avatar.Fallback>
+            <Avatar.Image src={user?.image || undefined} />
+            <Avatar.Fallback>{user?.name?.charAt(0) || "U"}</Avatar.Fallback>
           </Avatar>
         </Dropdown.Trigger>
         <Dropdown.Popover className={"border"}>
           <Dropdown.Menu>
             <Header>{user?.email}</Header>
-            {/* <Dropdown.Section>
-              <Dropdown.Item>Profile</Dropdown.Item>
-              <Dropdown.Item>Settings</Dropdown.Item>
-            </Dropdown.Section> */}
             <Dropdown.Section className="border-t border-t-gray-700">
               <Dropdown.Item
                 onPress={() => logoutFn()}

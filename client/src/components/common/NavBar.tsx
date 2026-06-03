@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/hooks/useAuth";
+import { authClient } from "@/lib/auth-client";
 import { usePathname, useRouter } from "next/navigation";
 import UserDropdown from "@/components/UserDropdown";
 import Link from "next/link";
@@ -14,10 +14,22 @@ const logoutLinks = [
 ];
 
 function NavBar() {
-  const { user, isAuthenticated, loading, logout } = useAuth();
+  const { data: session, isPending: loading } = authClient.useSession();
+  const router = useRouter();
   const pathname = usePathname();
 
+  const isAuthenticated = !!session;
+  const user = session?.user;
+
   const links = isAuthenticated ? loginLinks : logoutLinks;
+
+  const logout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => router.push("/login"),
+      },
+    });
+  };
 
   return (
     <div className="h-14 w-full bg-[#1a1a1d] items-center px-10  justify-between flex border-b border-b-gray-700">
@@ -45,8 +57,8 @@ function NavBar() {
             </Link>
           ))}
         </div>
-        {isAuthenticated && loading == false && (
-          <UserDropdown user={user!} logoutFn={logout} />
+        {isAuthenticated && !loading && (
+          <UserDropdown user={user as any} logoutFn={logout} />
         )}
       </div>
     </div>

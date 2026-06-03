@@ -1,7 +1,6 @@
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import { connectDatabase } from "./config/connectDatabase.js";
@@ -13,26 +12,31 @@ import { auth } from "./lib/auth.js";
 dotenv.config();
 
 const app = express();
+
 app.set("trust proxy", 1);
+
 const PORT = process.env["PORT"] || 3001;
-const FRONTEND_URL = process.env.FRONTEND_URL ?? "";
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 app.use(
-  cors({
-    credentials: true,
-    origin: FRONTEND_URL,
-  }),
+	cors({
+		credentials: true,
+		origin: FRONTEND_URL,
+		methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+		allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+	}),
 );
 
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-app.use(morgan("tiny"));
+app.use(morgan("dev"));
+
 app.use("/api/auth", toNodeHandler(auth));
+
 app.use(express.json());
-app.use(cookieParser());
 
 app.get("/health", (_req, res) => {
-  res.send("Hello World");
+	res.json({ status: "ok", message: "Smart Link API is running" });
 });
 
 app.use("/", linkRouter);
@@ -40,6 +44,6 @@ app.use("/", linkRouter);
 app.use(errorHandler);
 
 app.listen(PORT, async () => {
-  await connectDatabase();
-  console.log(`Server running on port ${PORT}`);
+	await connectDatabase();
+	console.log(`Server running on port ${PORT}`);
 });

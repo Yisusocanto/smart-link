@@ -4,61 +4,54 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import mongoose from "mongoose";
 
 const MongoClient = mongoose.mongo.MongoClient;
+const DB_URL = process.env["DB_URL"];
 
-const DB_URL = process.env["DB_URL"] ?? "";
+if (!DB_URL) {
+	throw new Error("DB_URL is not defined in environment variables");
+}
 
 const client = new MongoClient(DB_URL);
 const db = client.db();
 
 export const auth = betterAuth({
-  database: mongodbAdapter(db),
+	database: mongodbAdapter(db),
 
-  secret:
-    process.env["BETTER_AUTH_SECRET"] ?? "default-secret-change-in-production",
-  baseURL: process.env["BETTER_AUTH_URL"] ?? "http://localhost:3001/api/auth",
-  experimental: { joins: true },
-  advanced: {
-    cookiePrefix: "smart-link",
-    useSecureCookies:
-      process.env["NODE_ENV"] === "production" ||
-      (process.env["BETTER_AUTH_URL"]?.startsWith("https://") ?? false),
-    defaultCookieAttributes: {
-      sameSite: "none",
-      secure: true,
-      httpOnly: true,
-    },
-  },
-  user: {
-    additionalFields: {
-      username: {
-        type: "string",
-      },
-    },
-  },
+	secret: process.env["BETTER_AUTH_SECRET"],
 
-  socialProviders: {
-    google: {
-      clientId: process.env.CLIENT_ID ?? "",
-      clientSecret: process.env.CLIENT_SECRET ?? "",
-      scope: ["email", "profile"],
-      mapProfileToUser: async (profile) => {
-        return {
-          username:
-            profile.name.toLowerCase().replace(/\s+/g, "-") +
-            "-" +
-            Math.random().toString(36).slice(2, 7),
-          name: profile.name,
-        };
-      },
-    },
-  },
+	baseURL: process.env["BETTER_AUTH_URL"] || "http://localhost:3001",
 
-  emailAndPassword: {
-    enabled: true,
-  },
-  trustedOrigins: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    process.env.FRONTEND_URL ?? "",
-  ],
+	advanced: {
+		cookiePrefix: "smart-link",
+		useSecureCookies: process.env["NODE_ENV"] === "production",
+		defaultCookieAttributes: {
+			sameSite: "lax",
+			secure: process.env["NODE_ENV"] === "production",
+			httpOnly: true,
+		},
+	},
+
+	user: { additionalFields: { username: { type: "string" } } },
+
+	socialProviders: {
+		google: {
+			clientId: process.env.GOOGLE_CLIENT_ID || "",
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+			mapProfileToUser: async (profile) => {
+				return {
+					username:
+						profile.name.toLowerCase().replace(/\s+/g, "-") +
+						"-" +
+						Math.random().toString(36).slice(2, 7),
+					name: profile.name,
+				};
+			},
+		},
+	},
+
+	emailAndPassword: { enabled: true },
+
+	trustedOrigins: [
+		"http://localhost:3000",
+		process.env.FRONTEND_URL || "",
+	].filter(Boolean),
 });

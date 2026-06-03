@@ -12,21 +12,22 @@ import {
   TextField,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { Check, Copy, ExternalLink, Zap } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { handleCopy } from "@/lib/handleCopy";
 import { useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
+import { authClient } from "@/lib/auth-client";
 
 const Schema = z.object({
   url: z.url("URL invalid."),
 });
 
 function UrlForm() {
-  const { isAuthenticated } = useAuth();
+  const { data: session } = authClient.useSession();
+  const isAuthenticated = !!session;
+  
   const [copied, setCopied] = useState(false);
   const {
     register,
@@ -70,9 +71,7 @@ function UrlForm() {
       </Form>
       {isError && (
         <p className="text-danger">
-          {axios.isAxiosError(error)
-            ? error.response?.data.error
-            : "Unknown error."}
+          {(error as any)?.message || "Unknown error."}
         </p>
       )}
       {data && (

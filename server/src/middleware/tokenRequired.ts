@@ -2,27 +2,27 @@ import { Response, Request, NextFunction } from "express";
 import { auth } from "../lib/auth.js";
 
 export const tokenRequired = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+	req: Request,
+	res: Response,
+	next: NextFunction,
 ) => {
-  console.log("--- New Request ---");
-  console.log("Path:", req.path);
-  console.log("Headers:", JSON.stringify(req.headers, null, 2));
+	try {
+		const session = await auth.api.getSession({
+			headers: new Headers(req.headers as any),
+		});
 
-  const session = await auth.api.getSession({
-    headers: new Headers(req.headers as any),
-  });
+		if (!session) {
+			res.status(401).json({ error: "Unauthorized: No active session found." });
+			return;
+		}
 
-  console.log("Session found:", !!session);
+		req.user = { _id: session.user.id, email: session.user.email };
 
-  if (!session) {
-    res.status(401).json({ error: "Session not found or invalid." });
-    return;
-  }
-
-  req.user = {
-    _id: session.user.id,
-  };
-  next();
+		next();
+	} catch (error) {
+		console.error("Auth Middleware Error:", error);
+		res
+			.status(500)
+			.json({ error: "Internal Server Error during authentication." });
+	}
 };

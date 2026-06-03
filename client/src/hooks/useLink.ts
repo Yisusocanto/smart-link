@@ -3,8 +3,7 @@ import {
   deleteLink,
   toggleLinkStatus,
 } from "@/services/linkService";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -21,11 +20,9 @@ export const useToggleLinkStatus = () => {
     onSuccess: () => {
       router.refresh();
     },
-    onError: (error) => {
-      const errorMsj = axios.isAxiosError(error)
-        ? error.response?.data.error
-        : "Unknown error.";
-      toast(errorMsj, {
+    onError: (error: any) => {
+      const errorMsj = error.message || "Unknown error.";
+      toast.error(errorMsj, {
         duration: 5000,
       });
     },
@@ -39,11 +36,9 @@ export const useDeleteLink = () => {
     onSuccess: () => {
       router.refresh();
     },
-    onError: (error) => {
-      const errorMsj = axios.isAxiosError(error)
-        ? error.response?.data.error
-        : "Unknown error.";
-      toast(errorMsj, {
+    onError: (error: any) => {
+      const errorMsj = error.message || "Unknown error.";
+      toast.error(errorMsj, {
         duration: 5000,
       });
     },

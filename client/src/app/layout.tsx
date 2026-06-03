@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/providers/providers";
-import { AuthProvider } from "@/context/AuthContext";
 import NavBar from "@/components/common/NavBar";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/next";
@@ -31,16 +30,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased  dark text-foreground bg-[#121216]`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark text-foreground bg-[#121216]`}
       >
         <Providers>
-          <AuthProvider>
-            <NavBar />
-            {children}
-            <Analytics />
-            <SpeedInsights />
-            <Toaster richColors theme="dark" />
-          </AuthProvider>
+          <NavBar />
+          {children}
+          <Analytics />
+          <SpeedInsights />
+          <Toaster richColors theme="dark" />
         </Providers>
       </body>
     </html>
