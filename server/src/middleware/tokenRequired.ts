@@ -3,7 +3,6 @@ import { auth } from "../lib/auth.js";
 
 /**
  * Middleware para requerir una sesión activa.
- * Usa el API de better-auth para validar los headers de la petición.
  */
 export const tokenRequired = async (
   req: Request,
@@ -11,19 +10,22 @@ export const tokenRequired = async (
   next: NextFunction,
 ) => {
   try {
+    // Obtenemos la sesión. 
+    // better-auth necesita los headers para encontrar la cookie.
     const session = await auth.api.getSession({
       headers: new Headers(req.headers as any),
     });
 
     if (!session) {
-      console.log(`[Auth] No session found for path: ${req.path}`);
+      console.log(`[Auth] No session found for ${req.path}`);
+      // No imprimimos la cookie completa por seguridad, solo si existe
+      console.log(`[Auth] Cookies present: ${!!req.headers.cookie}`);
       res.status(401).json({ error: "Unauthorized: No active session found." });
       return;
     }
 
-    console.log(`[Auth] Session found for user: ${session.user.email}`);
-
-    // Inyectamos el usuario en la request para uso de los controladores
+    // Inyectamos el usuario en la request
+    // Nota: El id de better-auth es un string. 
     req.user = {
       _id: session.user.id,
       email: session.user.email,
@@ -32,6 +34,6 @@ export const tokenRequired = async (
     next();
   } catch (error) {
     console.error("Auth Middleware Error:", error);
-    res.status(500).json({ error: "Internal Server Error during authentication." });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

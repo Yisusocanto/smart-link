@@ -25,7 +25,8 @@ export const linkSchhema = new Schema<ILink>(
       default: true,
     },
     user: {
-      type: Schema.Types.ObjectId,
+      // Ahora coincide con el tipo string de la interfaz ILink
+      type: String,
       ref: "User",
     },
   },

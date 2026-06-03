@@ -18,18 +18,17 @@ export const auth = betterAuth({
 
 	secret: process.env["BETTER_AUTH_SECRET"],
 
-	// En producción, debe ser la URL del backend terminando en /api/auth
+	// baseURL debe ser la URL del backend incluyendo el path de la auth
 	baseURL: (process.env["BETTER_AUTH_URL"] || "http://localhost:3001") + "/api/auth",
 
 	advanced: {
 		cookiePrefix: "smart-link",
-		// Obligatorio para cross-domain en producción
 		useSecureCookies: process.env["NODE_ENV"] === "production",
 		defaultCookieAttributes: {
-			// 'none' es REQUERIDO si el frontend y backend están en dominios diferentes (Vercel vs Render)
 			sameSite: process.env["NODE_ENV"] === "production" ? "none" : "lax",
 			secure: process.env["NODE_ENV"] === "production",
 			httpOnly: true,
+			path: "/", // CRÍTICO: Las cookies deben ser enviadas a toda la API
 		},
 	},
 
@@ -53,9 +52,9 @@ export const auth = betterAuth({
 
 	emailAndPassword: { enabled: true },
 
-	// Añadimos explícitamente el origen del frontend
 	trustedOrigins: [
 		"http://localhost:3000",
 		process.env.FRONTEND_URL || "",
+		process.env.BETTER_AUTH_URL || "",
 	].filter(Boolean),
 });
