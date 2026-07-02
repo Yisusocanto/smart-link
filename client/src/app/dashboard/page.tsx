@@ -3,8 +3,6 @@ import TableLinks from "@/components/TableLinks";
 import { getAllLinks, linkStats } from "@/services/linkService";
 import { cookies } from "next/headers";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? "";
-
 async function Dashboard() {
 	const cookieStore = await cookies();
 	const [links, stats] = await Promise.all([

@@ -1,5 +1,6 @@
 "use client";
 
+import CopyButton from "@/components/CopyButton";
 import { BACKEND_URL } from "@/constants/backURL";
 import { useDeleteLink, useToggleLinkStatus } from "@/hooks/useLink";
 import { Link as LinkType } from "@/types/Link";
@@ -73,6 +74,7 @@ function TableLinks({ links }: TableLinksProps) {
 											isDisabled={isDeleting}>
 											<Trash />
 										</Button>
+										<CopyButton shortenLink={`${BACKEND_URL}/${link.alias}`} />
 									</Table.Cell>
 								</Table.Row>
 							);
