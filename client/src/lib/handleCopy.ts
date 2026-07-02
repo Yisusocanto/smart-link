@@ -1,13 +1,11 @@
-import { BACKEND_URL } from "@/constants/backURL";
-import { Link } from "@/types/Link";
-import { toast } from "sonner";
+import { toast } from "@heroui/react";
 
 export const handleCopy = (
-  link: Link,
-  setStateFunction: (x: boolean) => void,
+	link: string,
+	setStateFunction: (x: boolean) => void,
 ) => {
-  navigator.clipboard.writeText(`${BACKEND_URL}/${link.alias}`);
-  setStateFunction(true);
-  toast("Link copied to the clipboard.");
-  setTimeout(() => setStateFunction(false), 2000);
+	navigator.clipboard.writeText(link);
+	setStateFunction(true);
+	toast.success("Link copied to the clipboard.");
+	setTimeout(() => setStateFunction(false), 2000);
 };

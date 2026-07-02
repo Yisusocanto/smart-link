@@ -2,158 +2,146 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../lib/asyncHandler.js";
 import z from "zod";
 import {
-  BadRequest,
-  NotFound,
-  Unauthorized,
+	BadRequest,
+	NotFound,
+	Unauthorized,
 } from "../middleware/errorHandler.js";
 import { Link } from "../models/Link.js";
 import { createAlias } from "../lib/aliasHandler.js";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:3001";
 
-const linkSchema = z.object({
-  originalURL: z.url("Url must be provided."),
-});
+const linkSchema = z.object({ originalURL: z.url("Url must be provided.") });
 
 export const getAllLinks = asyncHandler(async (req: Request, res: Response) => {
-  const userID = req.user?._id ?? "";
-  const links = await Link.find({ user: userID }, { user: 0 });
-  res.json({ links: links });
+	const userID = req.user?._id ?? "";
+	const links = await Link.find({ user: userID }, { user: 0 });
+	res.json({ links: links });
 });
 
 export const createLink = asyncHandler(async (req: Request, res: Response) => {
-  const result = linkSchema.safeParse(req.body);
-  if (!result.success) {
-    throw BadRequest(result.error.issues[0]?.message ?? "Invalid data.");
-  }
+	const result = linkSchema.safeParse(req.body);
+	if (!result.success) {
+		throw BadRequest(result.error.issues[0]?.message ?? "Invalid data.");
+	}
 
-  const userID = req.user?._id;
+	const userID = req.user?._id;
 
-  let alias: string;
-  while (true) {
-    alias = createAlias();
-    let existingAlias = await Link.exists({ alias: alias });
-    if (!existingAlias) {
-      break;
-    }
-  }
+	let alias: string;
+	while (true) {
+		alias = createAlias();
+		let existingAlias = await Link.exists({ alias: alias });
+		if (!existingAlias) {
+			break;
+		}
+	}
 
-  const { originalURL } = result.data;
-  const newLink = await Link.create({
-    originalURL,
-    alias: alias,
-    ...(userID ? { user: userID } : {}),
-  });
+	const { originalURL } = result.data;
+	const newLink = await Link.create({
+		originalURL,
+		alias: alias,
+		...(userID ? { user: userID } : {}),
+	});
 
-  res.json({
-    shortenLink: `${BACKEND_URL}/${newLink.alias}`,
-    originalURL: originalURL,
-  });
+	res.json({
+		shortenLink: `${BACKEND_URL}/${newLink.alias}`,
+		originalURL: originalURL,
+	});
 });
 
 export const redirectToURL = asyncHandler(
-  async (req: Request, res: Response) => {
-    const alias = req.params.alias;
-    if (!alias) {
-      throw BadRequest("Link not valid or not provided.");
-    }
+	async (req: Request, res: Response) => {
+		const alias = req.params.alias;
+		if (!alias) {
+			throw BadRequest("Link not valid or not provided.");
+		}
 
-    const link = await Link.findOneAndUpdate(
-      { alias: alias },
-      { $inc: { clickCount: 1 } },
-    );
-    if (!link) {
-      throw NotFound("Link does not exist.");
-    }
+		const link = await Link.findOneAndUpdate(
+			{ alias: alias },
+			{ $inc: { clickCount: 1 } },
+		);
+		if (!link) {
+			throw NotFound("Link does not exist.");
+		}
 
-    if (!link.active) {
-      throw NotFound("Link does no exist.");
-    }
+		if (!link.active) {
+			throw NotFound("Link does no exist.");
+		}
 
-    res.redirect(link.originalURL);
-  },
+		res.redirect(link.originalURL);
+	},
 );
 
 export const toggleStatus = asyncHandler(
-  async (req: Request, res: Response) => {
-    const userID = req.user?._id;
-    const alias = req.params.alias;
-    if (!alias) {
-      throw BadRequest("Link invalid or not provided.");
-    }
+	async (req: Request, res: Response) => {
+		const userID = req.user?._id;
+		const alias = req.params.alias;
+		if (!alias) {
+			throw BadRequest("Link invalid or not provided.");
+		}
 
-    const link = await Link.findOne({ alias: alias });
-    if (!link) {
-      throw NotFound("Link does not exist.");
-    }
+		const link = await Link.findOne({ alias: alias });
+		if (!link) {
+			throw NotFound("Link does not exist.");
+		}
 
-    if (userID && link.user.toString() != userID) {
-      throw Unauthorized("Your cannot modifies this link.");
-    }
+		if (userID && link.user.toString() != userID) {
+			throw Unauthorized("Your cannot modifies this link.");
+		}
 
-    link.active = !link.active;
-    await link.save();
+		link.active = !link.active;
+		await link.save();
 
-    res.json({
-      link: link.originalURL,
-      success: true,
-    });
-  },
+		res.json({ link: link.originalURL, success: true });
+	},
 );
 
 export const deleteLink = asyncHandler(async (req: Request, res: Response) => {
-  const alias = req.params.alias;
+	const alias = req.params.alias;
 
-  if (!alias) {
-    throw BadRequest("Alias must be prvided.");
-  }
+	if (!alias) {
+		throw BadRequest("Alias must be prvided.");
+	}
 
-  const link = await Link.findOneAndDelete({ alias });
-  if (!link) {
-    throw NotFound("Link not found.");
-  }
+	const link = await Link.findOneAndDelete({ alias });
+	if (!link) {
+		throw NotFound("Link not found.");
+	}
 
-  res.json({ success: "Link deleted succesfully." });
+	res.json({ success: "Link deleted succesfully." });
 });
 
 export const linkStats = asyncHandler(async (req: Request, res: Response) => {
-  const userID = req.user?._id ?? "";
+	const userID = req.user?._id ?? "";
 
-  const totalLinksPromise = Link.countDocuments({ user: userID });
-  const totalActiveLinksPromise = Link.countDocuments({
-    user: userID,
-    active: true,
-  });
-  const totalClicksPromise = Link.aggregate([
-    {
-      $match: { user: userID },
-    },
-    {
-      $group: {
-        _id: null,
-        totalClicks: { $sum: "$clickCount" },
-      },
-    },
-  ]);
+	const totalLinksPromise = Link.countDocuments({ user: userID });
+	const totalActiveLinksPromise = Link.countDocuments({
+		user: userID,
+		active: true,
+	});
+	const totalClicksPromise = Link.aggregate([
+		{ $match: { user: userID } },
+		{ $group: { _id: null, totalClicks: { $sum: "$clickCount" } } },
+	]);
 
-  const [totalLinks, totalActiveLinks, totalClicks] = await Promise.all([
-    totalLinksPromise,
-    totalActiveLinksPromise,
-    totalClicksPromise,
-  ]);
+	const [totalLinks, totalActiveLinks, totalClicks] = await Promise.all([
+		totalLinksPromise,
+		totalActiveLinksPromise,
+		totalClicksPromise,
+	]);
 
-  res.json({
-    totalLinks,
-    totalActiveLinks,
-    totalClicks: totalClicks[0]?.totalClicks ?? 0,
-  });
+	res.json([
+		{ label: "Total Links", content: totalLinks },
+		{ label: "Total Active Links", content: totalActiveLinks },
+		{ label: "Total Clicks", content: totalClicks[0]?.totalClicks ?? 0 },
+	]);
 });
 
 export const recentLinks = asyncHandler(async (req: Request, res: Response) => {
-  const userID = req.user?._id ?? "";
+	const userID = req.user?._id ?? "";
 
-  const recentLinksArray = await Link.find({ user: userID })
-    .sort({ createdAt: -1 })
-    .limit(5);
-  res.json({ recentLinks: recentLinksArray });
+	const recentLinksArray = await Link.find({ user: userID })
+		.sort({ createdAt: -1 })
+		.limit(5);
+	res.json({ recentLinks: recentLinksArray });
 });

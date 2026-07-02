@@ -2,122 +2,100 @@
 
 import { useCreateLink } from "@/hooks/useLink";
 import {
-  Button,
-  buttonVariants,
-  Card,
-  FieldError,
-  Form,
-  InputGroup,
-  Spinner,
-  TextField,
+	Button,
+	Card,
+	FieldError,
+	Form,
+	InputGroup,
+	Separator,
+	Spinner,
+	TextField,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, Copy, ExternalLink, Zap } from "lucide-react";
+import { Check, Copy, Link2, SquareArrowOutUpRight, Zap } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { handleCopy } from "@/lib/handleCopy";
 import { useState } from "react";
-import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { buttonVariants } from "@heroui/react";
+import Link from "next/link";
+import CopyButton from "@/components/CopyButton";
 
-const Schema = z.object({
-  url: z.url("URL invalid."),
-});
+const Schema = z.object({ url: z.url("URL invalid.") });
 
 function UrlForm() {
-  const { data: session } = authClient.useSession();
-  const isAuthenticated = !!session;
-  
-  const [copied, setCopied] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ resolver: zodResolver(Schema) });
+	const x = buttonVariants({ variant: "outline", isIconOnly: true });
+	const { data: session } = authClient.useSession();
+	const isAuthenticated = !!session;
 
-  const {
-    mutate: createLink,
-    isPending,
-    isError,
-    error,
-    data,
-  } = useCreateLink();
+	const [copied, setCopied] = useState(false);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm({ resolver: zodResolver(Schema) });
 
-  const onSubmit = handleSubmit((data) => {
-    createLink(data.url);
-  });
+	const {
+		mutate: createLink,
+		isPending,
+		isError,
+		error,
+		data,
+	} = useCreateLink();
 
-  return (
-    <div>
-      <Form onSubmit={onSubmit}>
-        <TextField isInvalid={!!errors.url} aria-label="text-field">
-          <InputGroup
-            className={"py-7 hover:bg-surface pointer-fine:bg-surface"}
-          >
-            <InputGroup.Input
-              type="text"
-              {...register("url")}
-              placeholder="https://example.com/very-long-url-to-shorten..."
-            />
-            <InputGroup.Suffix>
-              <Button aria-label="submit" type="submit">
-                {isPending ? "Shorting..." : "Shorten"}
-                {isPending ? <Spinner /> : <Zap />}
-              </Button>
-            </InputGroup.Suffix>
-          </InputGroup>
-          <FieldError>{errors.url?.message}</FieldError>
-        </TextField>
-      </Form>
-      {isError && (
-        <p className="text-danger">
-          {(error as any)?.message || "Unknown error."}
-        </p>
-      )}
-      {data && (
-        <>
-          <Card className="flex flex-col sm:flex-row justify-between mt-5 border p-4 gap-3">
-            <div className="flex flex-col min-w-0">
-              <a
-                href={data.shortenLink}
-                target="_blank"
-                className="text-base md:text-lg font-bold text-blue-500 hover:text-blue-400 flex gap-2 items-center break-all"
-              >
-                {data.shortenLink}{" "}
-                <ExternalLink size={18} className="shrink-0" />
-              </a>
-              <p className="text-muted text-sm md:text-base break-all">
-                {data.originalURL}
-              </p>
-            </div>
-            <div className="flex items-center justify-center sm:justify-end">
-              <Button
-                onPress={() => handleCopy(data.shortenLink, setCopied)}
-                className="w-full sm:w-auto "
-              >
-                {copied ? <Check /> : <Copy />}
-                {copied ? "copied" : "copy"}
-              </Button>
-            </div>
-          </Card>
-        </>
-      )}
-      {data && !isAuthenticated && (
-        <div className="flex items-center justify-center gap-2 mt-4">
-          <p>
-            Create an account and start tracking and monitoring your shortened
-            URLs.
-          </p>
-          <Link
-            href={"/register"}
-            className={buttonVariants({ variant: "primary" })}
-          >
-            Register
-          </Link>
-        </div>
-      )}
-    </div>
-  );
+	const onSubmit = handleSubmit((data) => {
+		createLink(data.url);
+	});
+
+	return (
+		<div>
+			<Form onSubmit={onSubmit}>
+				<TextField isInvalid={!!errors.url} aria-label="text-field">
+					<InputGroup
+						className={"py-2 w-full max-w-2xl mx-auto shadow-lg/50 shadow-accent/20"}>
+						<InputGroup.Input
+							className={"text-xl w-full min-w-0"}
+							type="text"
+							{...register("url")}
+							placeholder="https://example.com/very-long-url-to-shorten..."
+						/>
+						<InputGroup.Suffix>
+							<Button aria-label="submit" type="submit">
+								{isPending ? <Spinner color="current" /> : <Zap />}
+								{isPending ? "Shorting..." : "Shorten"}
+							</Button>
+						</InputGroup.Suffix>
+					</InputGroup>
+					<FieldError>{errors.url?.message}</FieldError>
+				</TextField>
+			</Form>
+			{isError && (
+				<p className="text-danger">
+					{(error as any)?.message || "Unknown error."}
+				</p>
+			)}
+			{data && (
+				<>
+					<Card className="flex flex-col sm:flex-row w-full max-w-2xl mt-5 border p-4 gap-3 mx-auto items-start sm:items-center">
+						<span className="flex-1 flex font-semibold text-accent items-center gap-2 w-full break-all">
+							<Link2 size={20} className="shrink-0" /> {data.shortenLink}
+						</span>
+						<div className="hidden sm:block h-6 border-l border-border" />
+						<span className="w-full sm:flex-3 text-muted truncate">
+							{data.originalURL}
+						</span>
+						<div className="flex gap-2 w-full sm:w-auto justify-end">
+							<CopyButton shortenLink={data.shortenLink} />
+							<Link href={data.shortenLink} className={x} target="_blank">
+								<SquareArrowOutUpRight />
+							</Link>
+						</div>
+					</Card>
+				</>
+			)}
+		</div>
+	);
 }
 
 export default UrlForm;
