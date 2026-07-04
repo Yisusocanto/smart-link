@@ -6,6 +6,7 @@ import NavBar from "@/components/common/NavBar";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toast } from "@heroui/react";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
@@ -28,11 +29,12 @@ export default function RootLayout({
 			className="dark overflow-x-clip"
 			data-vibrant-palette="true">
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased text-foreground bg-background w-full sm:max-w-3/4 mx-auto px-4 sm:px-0 mb-20 overflow-x-clip`}>
+				className={`${geistSans.variable} ${geistMono.variable} antialiased text-foreground bg-background w-full sm:max-w-3/4 mx-auto px-4 sm:px-0 overflow-x-clip`}>
 				<Providers>
 					<Toast.Provider />
 					<NavBar />
 					{children}
+					<Footer />
 					<Analytics />
 					<SpeedInsights />
 				</Providers>
