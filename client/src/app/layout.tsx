@@ -23,7 +23,10 @@ export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
 	return (
-		<html lang="en" className="dark overflow-x-clip" data-vibrant-palette="true">
+		<html
+			lang="en"
+			className="dark overflow-x-clip"
+			data-vibrant-palette="true">
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased text-foreground bg-background w-full sm:max-w-3/4 mx-auto px-4 sm:px-0 mb-20 overflow-x-clip`}>
 				<Providers>
