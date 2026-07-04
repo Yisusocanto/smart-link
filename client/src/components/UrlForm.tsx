@@ -53,7 +53,7 @@ function UrlForm() {
 			<Form onSubmit={onSubmit}>
 				<TextField isInvalid={!!errors.url} aria-label="text-field">
 					<InputGroup
-						className={"py-2 w-full max-w-2xl mx-auto shadow-lg/50 shadow-accent/20"}>
+						className={"py-2 w-full  mx-auto shadow-lg/50 shadow-accent/20"}>
 						<InputGroup.Input
 							className={"text-xl w-full min-w-0"}
 							type="text"
@@ -77,12 +77,12 @@ function UrlForm() {
 			)}
 			{data && (
 				<>
-					<Card className="flex flex-col sm:flex-row w-full max-w-2xl mt-5 border p-4 gap-3 mx-auto items-start sm:items-center">
+					<Card className="flex flex-col sm:flex-row w-full max-w-2xl mt-5 border border-success/35 bg-success/5 p-4 gap-3 mx-auto items-start sm:items-center shadow-md shadow-success/5 rounded-2xl hover:border-success/50 transition-all duration-300">
 						<span className="flex-1 flex font-semibold text-accent items-center gap-2 w-full break-all">
 							<Link2 size={20} className="shrink-0" /> {data.shortenLink}
 						</span>
 						<div className="hidden sm:block h-6 border-l border-border" />
-						<span className="w-full sm:flex-3 text-muted truncate">
+						<span className="w-full sm:flex-3 text-muted truncate block">
 							{data.originalURL}
 						</span>
 						<div className="flex gap-2 w-full sm:w-auto justify-end">

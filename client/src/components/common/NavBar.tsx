@@ -10,7 +10,7 @@ const loginLinks = [{ label: "Dashboard", href: "/dashboard" }];
 
 const logoutLinks = [
 	{ label: "Login", href: "/login" },
-	{ label: "Get Started", href: "/register" },
+	{ label: "Sign Up", href: "/register" },
 ];
 
 function NavBar() {
@@ -30,20 +30,21 @@ function NavBar() {
 	};
 
 	return (
-		<div className="sticky top-5 z-50 mt-4 mb-10 h-14 w-full sm:w-3/4 md:w-3/5 lg:w-3/6 m-auto bg-surface rounded-4xl items-center px-2 sm:px-10  justify-between flex border shadow-lg/50 shadow-accent/20">
+		<div className="sticky top-5 z-50 mt-4 mb-10 h-14 w-full sm:w-3/4 md:w-3/5 lg:w-3/6 m-auto bg-surface rounded-4xl items-center px-4 sm:px-10 justify-between flex border shadow-lg/50 shadow-accent/20">
 			<div className="flex items-center gap-2">
-				<Link href={"/"} className="text-xl font-bold flex items-center gap-2">
+				<Link href={"/"} className="text-base sm:text-xl font-bold flex items-center gap-1.5 sm:gap-2">
 					<Image
 						alt="Smart Link logo"
 						src={"/logo.png"}
-						width={35}
-						height={35}
+						width={30}
+						height={30}
+						className="sm:w-[35px] sm:h-[35px]"
 					/>
-					Smart <span className="text-accent">Link</span>
+					<span>Smart <span className="text-accent">Link</span></span>
 				</Link>
 			</div>
-			<div className="flex gap-4">
-				<div className="flex items-center gap-4">
+			<div className="flex gap-2 sm:gap-4">
+				<div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
 					{links.map((link) => (
 						<Link
 							key={link.label}
